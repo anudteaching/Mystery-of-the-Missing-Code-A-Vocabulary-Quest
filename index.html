@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocabulary Adventure</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #DCD5E6;
+            color: #0B0B0B;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-size: 16px;
+        }
+
+        #game-container {
+            width: 80%;
+            max-width: 800px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .slide {
+            padding: 20px;
+            display: none;
+        }
+
+        .slide:target {
+            display: block;
+        }
+
+        /* Header/Dashboard Styles */
+        #dashboard {
+            background-color: #6134AA;
+            color: #DCD5E6;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        #dashboard div {
+            font-size: 16px;
+        }
+
+        /* Button Styles */
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #DCD5E6;
+            color: #0B0B0B;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+            cursor: pointer;
+            border: none;
+            font-size: 16px;
+        }
+
+        .button:hover {
+            background-color: #A7A5AA;
+        }
+
+        /* Question Styles */
+        .question-container {
+            margin-bottom: 20px;
+        }
+
+        .question-text {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .answer-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: left;
+            cursor: pointer;
+            background-color: #DCD5E6;
+            color: #0B0B0B;
+        }
+
+        .answer-button:hover {
+            background-color: #A7A5AA;
+        }
+
+        /* Level Specific Styles */
+        .level {
+            background: linear-gradient(rgba(97, 52, 170, 0.3), rgba(97, 52, 170, 0.3)), url('https://images.unsplash.com/photo-1541484483-577f066f8ab9?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8MHx8fA%3D%3D');
+            background-size: cover;
+            color: #0B0B0B;
+        }
+
+        /* Character Selection Styles */
+        #character-selection {
+            text-align: center;
+        }
+
+        .character-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #DCD5E6;
+            color: #0B0B0B;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px;
+            cursor: pointer;
+            border: none;
+            font-size: 16px;
+        }
+
+        .character-button:hover {
+            background-color: #A7A5AA;
+        }
+
+        .selected {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        /* Game Over Styles */
+        #game-over {
+            text-align: center;
+        }
+
+        /* Restart Styles */
+        #restart {
+            text-align: center;
+        }
+
+        /* Font sizes */
+        h2 {
+            font-size: 25px;
+        }
+        h3 {
+            font-size: 22px;
+        }
+        p {
+            font-size: 18px;
+        }
+
+        /* Restart Button Styles */
+        #restart-button {
+            display: block;
+            width: 100%;
+            padding: 10px 20px;
+            background-color: #DCD5E6;
+            color: #0B0B0B;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        #restart-button:disabled {
+            background-color: #A7A5AA;
+            cursor: not-allowed;
+        }
+
+        /* Footer Style */
+        #footer {
+            text-align: center;
+            font-size: 16px;
+            color: #0B0B0B;
+            background-color: #DCD5E6;
+            padding: 5px;
+            margin-top: 20px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div id="dashboard">
+        <div>Score: <span id="score">0</span></div>
+        <div>Lives: <span id="lives">5</span></div>
+    </div>
+
+    <!-- Character Selection -->
+    <div id="character-selection" class="slide" style="display: block;">
+        <h2>Choose Your Character</h2>
+        <h3>Select your class:</h3>
+        <button class="character-button" onclick="selectCharacter('hero', this)">Hero</button>
+        <button class="character-button" onclick="selectCharacter('mage', this)">Mage</button>
+        <button class="character-button" onclick="selectCharacter('healer', this)">Healer</button>
+        <br><br>
+        <button class="button" onclick="startGame()">Start Adventure</button>
+         <div id="footer">
+             Mr Anu Dissanayake @ FHS
+        </div>
+    </div>
+
+    <!-- Levels 1 to 6 -->
+    <div id="level1" class="slide level">
+        <h2>Level 1</h2>
+        <p>The adventure begins! A simple test to start...</p>
+        <div id="question-container-1" class="question-container"></div>
+        <button id="restart-button" class="button" onclick="restartGame()">Restart Game</button>
+    </div>
+    <div id="level2" class="slide level">
+        <h2>Level 2</h2>
+        <p>The path gets a bit harder...</p>
+        <div id="question-container-2" class="question-container"></div>
+        <button id="restart-button" class="button" onclick="restartGame()">Restart Game</button>
+    </div>
+    <div id="level3" class="slide level">
+        <h2>Level 3</h2>
+        <p>The path is getting more arduous...</p>
+        <div id="question-container-3" class="question-container"></div>
+        <button id="restart-button" class="button" onclick="restartGame()">Restart Game</button>
+    </div>
+    <div id="level4" class="slide level">
+        <h2>Level 4</h2>
+        <p>The journey gets harder...</p>
+        <div id="question-container-4" class="question-container"></div>
+        <button id="restart-button" class="button" onclick="restartGame()">Restart Game</button>
+    </div>
+    <div id="level5" class="slide level">
+        <h2>Level 5</h2>
+        <p>The journey is just getting started...</p>
+        <div id="question-container-5" class="question-container"></div>
+        <button id="restart-button" class="button" onclick="restartGame()">Restart Game</button>
+    </div>
+     <div id="level6" class="slide level">
+        <h2>Level 6</h2>
+        <p>The final challenge of your journey!...</p>
+        <div id="question-container-6" class="question-container"></div>
+        <button id="restart-button" class="button" onclick="restartGame()">Restart Game</button>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="game-over" class="slide">
+        <h2>Game Over</h2>
+        <p>Your adventure has come to an end. Final Score: <span id="final-score"></span></p>
+        <button class="button" onclick="restartGame()">Restart Game</button>
+    </div>
+
+    <!-- Restart Screen -->
+    <div id="restart" class="slide">
+        <h2>Restart Game</h2>
+        <p>Do you want to play again?</p>
+        <button class="button" onclick="restartGame()">Yes, Restart!</button>
+    </div>
+</div>
+       <script>
+        // Game State
+        let score = 0;
+        let lives = 5;
+        let currentLevel = 1;
+        let character = '';
+        let questionAnswered = false;
+        let askedQuestions = []; // Track questions asked in the game
+
+        // Word Database
+        const wordDatabase = [
+            { word: "Algorithm", definition: "A list of steps to finish a task.", level: 1, incorrectAnswers: ["A type of computer", "A dance move", "A kind of bird"] },
+            { word: "Bug", definition: "Part of a program that does not work correctly.", level: 1, incorrectAnswers: ["A small insect", "A feature, not a problem", "A type of food"] },
+            { word: "Debugging", definition: "Finding and fixing problems in an algorithm or program.", level: 1, incorrectAnswers: ["Creating new bugs", "Ignoring problems", "Deleting the program"] },
+            { word: "Sequencing", definition: "Putting commands in correct order so computers can read the commands.", level: 1, incorrectAnswers: ["Mixing up commands", "Deleting commands", "Ignoring commands"] },
+            { word: "Loop", definition: "The action of doing something over and over again.", level: 1, incorrectAnswers: ["Stopping an action", "A straight line", "Doing something once"] },
+            { word: "Repeat", definition: "To do something again.", level: 1, incorrectAnswers: ["To do something once", "To stop doing something", "To avoid doing something"] },
+            { word: "Event", definition: "An action that causes something to happen.", level: 1, incorrectAnswers: ["Nothing happens", "A static image", "A planned party"] },
+            { word: "Code", definition: "To write code, or to write instructions for a computer.", level: 1, incorrectAnswers: ["To draw pictures", "To sing a song", "To bake a cake"] },
+
+            { word: "Program", definition: "An algorithm that has been coded into something that can be run by a machine.", level: 2, incorrectAnswers: ["A list of instructions for humans", "A physical machine", "A type of dance"] },
+            { word: "Behavior", definition: "An action that a sprite performs continuously until it's told to stop.", level: 2, incorrectAnswers: ["A static image", "A one-time action", "A type of food"] },
+            { word: "Sprite", definition: "A graphic on the screen with a location, size, and appearance.", level: 2, incorrectAnswers: ["A type of drink", "A real person", "A hidden object"] },
+            { word: "Angle", definition: "Where two sides of a shape come together, measured in degrees.", level: 2, incorrectAnswers: ["A straight line", "A curved line", "The area of a shape"] },
+            { word: "Function", definition: "A piece of code that you can easily call over and over again.", level: 2, incorrectAnswers: ["A broken piece of code", "A comment in the code", "A secret code"] },
+            { word: "Variable", definition: "A label for a piece of information used in a program.", level: 2, incorrectAnswers: ["A fixed value", "A type of loop", "A type of bug"] },
+            { word: "Command", definition: "An instruction for the computer. Many commands put together make up algorithms and computer programs.", level: 2, incorrectAnswers: ["A question for the computer", "A suggestion for the computer", "A request to the computer"] },
+            { word: "Condition", definition: "Something a program checks to see if it is true before allowing an action.", level: 2, incorrectAnswers: ["A random event", "A guaranteed action", "A type of variable"] },
+
+             { word: "Programming", definition: "The art of creating a program.", level: 3, incorrectAnswers: ["The act of deleting a program", "The science of breaking computers", "The study of insects"] },
+            { word: "Persistence", definition: "Not giving up.", level: 3, incorrectAnswers: ["Giving up easily", "Ignoring problems", "Creating more problems"] },
+            { word: "Modify", definition: "Make partial or minor changes to something, typically so as to improve it.", level: 3, incorrectAnswers: ["Destroying something", "Ignoring something", "Leaving something unchanged"] },
+            { word: "Events", definition: "Actions or occurrences that trigger specific code blocks.", level: 3, incorrectAnswers: ["Actions that don't trigger anything", "Static images", "Planned parties"] },
+            { word: "Functions", definition: "Reusable code blocks for specific tasks.", level: 3, incorrectAnswers: ["Blocks of code that do nothing", "Comments in the code", "Secrets in the code"] },
+            { word: "Loops", definition: "Repeating instruction sequences multiple times.", level: 3, incorrectAnswers: ["Sequences of instructions that run once", "Sequences of instructions that stop immediately", "Sequences of instructions that are ignored"] },
+            { word: "Conditionals", definition: "Statements that only run under certain conditions.", level: 3, incorrectAnswers: ["Statements that always run", "Statements that never run", "Statements that run randomly"] },
+            { word: "While Loop", definition: "Loop repeating while a condition is true.", level: 3, incorrectAnswers: ["A loop that runs once", "A loop that runs forever", "A loop that stops immediately"] },
+            { word: "Until", definition: "Command to do something until a condition is true.", level: 3, incorrectAnswers: ["A command that makes something false", "A command that does nothing", "A command that runs forever"] },
+            { word: "Define", definition: "Clarify problem details.", level: 3, incorrectAnswers: ["Ignore the details", "Create more problems", "Make something up"] },
+            { word: "Prepare", definition: "Research, plan, and get materials ready.", level: 3, incorrectAnswers: ["Do no research", "Don't plan anything", "Use no materials"] },
+            { word: "Reflect", definition: "Carefully review past actions.", level: 3, incorrectAnswers: ["Don't think back", "Repeat the same mistakes", "Ignore the outcome"] },
+            { word: "Try", definition: "Attempt to do something.", level: 3, incorrectAnswers: ["Avoid doing anything", "Assume you can't do it", "Don't even start"] },
+
+            { word: "Programming", definition: "The art of creating a program.", level: 4, incorrectAnswers: ["The act of deleting a program", "The science of breaking computers", "The study of insects"] },
+            { word: "Persistence", definition: "Not giving up.", level: 4, incorrectAnswers: ["Giving up easily", "Ignoring problems", "Creating more problems"] },
+            { word: "Modify", definition: "Make partial or minor changes to something, typically so as to improve it.", level: 4, incorrectAnswers: ["Destroying something", "Ignoring something", "Leaving something unchanged"] },
+            { word: "Events", definition: "Actions or occurrences that trigger specific code blocks.", level: 4, incorrectAnswers: ["Actions that don't trigger anything", "Static images", "Planned parties"] },
+            { word: "Functions", definition: "Reusable code blocks for specific tasks.", level: 4, incorrectAnswers: ["Blocks of code that do nothing", "Comments in the code", "Secrets in the code"] },
+            { word: "Loops", definition: "Repeating instruction sequences multiple times.", level: 4, incorrectAnswers: ["Sequences of instructions that run once", "Sequences of instructions that stop immediately", "Sequences of instructions that are ignored"] },
+            { word: "Conditionals", definition: "Statements that only run under certain conditions.", level: 4, incorrectAnswers: ["Statements that always run", "Statements that never run", "Statements that run randomly"] },
+            { word: "While Loop", definition: "Loop repeating while a condition is true.", level: 4, incorrectAnswers: ["A loop that runs once", "A loop that runs forever", "A loop that stops immediately"] },
+            { word: "Until", definition: "Command to do something until a condition is true.", level: 4, incorrectAnswers: ["A command that makes something false", "A command that does nothing", "A command that runs forever"] },
+            { word: "Define", definition: "Clarify problem details.", level: 4, incorrectAnswers: ["Ignore the details", "Create more problems", "Make something up"] },
+            { word: "Prepare", definition: "Research, plan, and get materials ready.", level: 4, incorrectAnswers: ["Do no research", "Don't plan anything", "Use no materials"] },
+            { word: "Reflect", definition: "Carefully review past actions.", level: 4, incorrectAnswers: ["Don't think back", "Repeat the same mistakes", "Ignore the outcome"] },
+            { word: "Try", definition: "Attempt to do something.", level: 4, incorrectAnswers: ["Avoid doing anything", "Assume you can't do it", "Don't even start"] },
+
+            { word: "Programming", definition: "The art of creating a program.", level: 5, incorrectAnswers: ["The act of deleting a program", "The science of breaking computers", "The study of insects"] },
+            { word: "Persistence", definition: "Not giving up.", level: 5, incorrectAnswers: ["Giving up easily", "Ignoring problems", "Creating more problems"] },
+            { word: "Modify", definition: "Make partial or minor changes to something, typically so as to improve it.", level: 5, incorrectAnswers: ["Destroying something", "Ignoring something", "Leaving something unchanged"] },
+            { word: "Events", definition: "Actions or occurrences that trigger specific code blocks.", level: 5, incorrectAnswers: ["Actions that don't trigger anything", "Static images", "Planned parties"] },
+            { word: "Functions", definition: "Reusable code blocks for specific tasks.", level: 5, incorrectAnswers: ["Blocks of code that do nothing", "Comments in the code", "Secrets in the code"] },
+            { word: "Loops", definition: "Repeating instruction sequences multiple times.", level: 5, incorrectAnswers: ["Sequences of instructions that run once", "Sequences of instructions that stop immediately", "Sequences of instructions that are ignored"] },
+            { word: "Conditionals", definition: "Statements that only run under certain conditions.", level: 5, incorrectAnswers: ["Statements that always run", "Statements that never run", "Statements that run randomly"] },
+            { word: "While Loop", definition: "Loop repeating while a condition is true.", level: 5, incorrectAnswers: ["A loop that runs once", "A loop that runs forever", "A loop that stops immediately"] },
+            { word: "Until", definition: "Command to do something until a condition is true.", level: 5, incorrectAnswers: ["A command that makes something false", "A command that does nothing", "A command that runs forever"] },
+            { word: "Define", definition: "Clarify problem details.", level: 5, incorrectAnswers: ["Ignore the details", "Create more problems", "Make something up"] },
+            { word: "Prepare", definition: "Research, plan, and get materials ready.", level: 5, incorrectAnswers: ["Do no research", "Don't plan anything", "Use no materials"] },
+            { word: "Reflect", definition: "Carefully review past actions.", level: 5, incorrectAnswers: ["Don't think back", "Repeat the same mistakes", "Ignore the outcome"] },
+            { word: "Try", definition: "Attempt to do something.", level: 5, incorrectAnswers: ["Avoid doing anything", "Assume you can't do it", "Don't even start"] },
+    // The following is level 6's questions
+            { word: "Programming", definition: "The art of creating a program.", level: 6, incorrectAnswers: ["The act of deleting a program", "The science of breaking computers", "The study of insects"] },
+            { word: "Persistence", definition: "Not giving up.", level: 6, incorrectAnswers: ["Giving up easily", "Ignoring problems", "Creating more problems"] },
+            { word: "Modify", definition: "Make partial or minor changes to something, typically so as to improve it.", level: 6, incorrectAnswers: ["Destroying something", "Ignoring something", "Leaving something unchanged"] },
+            { word: "Events", definition: "Actions or occurrences that trigger specific code blocks.", level: 6, incorrectAnswers: ["Actions that don't trigger anything", "Static images", "Planned parties"] },
+            { word: "Functions", definition: "Reusable code blocks for specific tasks.", level: 6, incorrectAnswers: ["Blocks of code that do nothing", "Comments in the code", "Secrets in the code"] },
+            { word: "Loops", definition: "Repeating instruction sequences multiple times.", level: 6, incorrectAnswers: ["Sequences of instructions that run once", "Sequences of instructions that stop immediately", "Sequences of instructions that are ignored"] },
+            { word: "Conditionals", definition: "Statements that only run under certain conditions.", level: 6, incorrectAnswers: ["Statements that always run", "Statements that never run", "Statements that run randomly"] },
+            { word: "While Loop", definition: "Loop repeating while a condition is true.", level: 6, incorrectAnswers: ["A loop that runs once", "A loop that runs forever", "A loop that stops immediately"] },
+            { word: "Until", definition: "Command to do something until a condition is true.", level: 6, incorrectAnswers: ["A command that makes something false", "A command that does nothing", "A command that runs forever"] },
+            { word: "Define", definition: "Clarify problem details.", level: 6, incorrectAnswers: ["Ignore the details", "Create more problems", "Make something up"] },
+            { word: "Prepare", definition: "Research, plan, and get materials ready.", level: 6, incorrectAnswers: ["Do no research", "Don't plan anything", "Use no materials"] },
+            { word: "Reflect", definition: "Carefully review past actions.", level: 6, incorrectAnswers: ["Don't think back", "Repeat the same mistakes", "Ignore the outcome"] },
+            { word: "Try", definition: "Attempt to do something.", level: 6, incorrectAnswers: ["Avoid doing anything", "Assume you can't do it", "Don't even start"] },
+        ];
+
+      let currentQuestion = null; // Store the current question
+       let timer;
+        // Function to select a character
+        function selectCharacter(selectedCharacter, element) {
+            // Remove 'selected' class from all character buttons
+            const buttons = document.querySelectorAll('.character-button');
+            buttons.forEach(button => button.classList.remove('selected'));
+
+            // Add 'selected' class to the clicked button
+            element.classList.add('selected');
+
+            character = selectedCharacter;
+        }
+
+        // Function to update the dashboard
+        function updateDashboard() {
+            document.getElementById("score").innerText = score;
+            document.getElementById("lives").innerText = lives;
+        }
+        // Function to generate a single question for a level
+        function generateQuestion(level) {
+             let levelWords = wordDatabase.filter(word => word.level === level);
+
+            // Filter out already asked questions
+            levelWords = levelWords.filter(wordData => !askedQuestions.includes(wordData.word));
+
+            if (levelWords.length === 0) {
+                console.warn(`No new words left for level ${level}. Resetting asked questions.`);
+                 askedQuestions = []; // Clear the askedQuestions array if no new words are available
+                 levelWords = wordDatabase.filter(word => word.level === level); // Reload all words for the level
+                  levelWords = levelWords.filter(wordData => !askedQuestions.includes(wordData.word)); // Ensure no immediate repeats after reset
+                 if (levelWords.length === 0) {
+                       console.error(`Still no words after reset for level ${level}! Something is wrong. Please increase the number of question in the array`);
+                  return; // Exit if still no words after reset (avoid infinite loop)
+              }
+            }
+            const wordData = levelWords[Math.floor(Math.random() * levelWords.length)];
+            const correctAnswer = wordData.definition;
+            const incorrectAnswers = [...wordData.incorrectAnswers];
+            const answers = [correctAnswer, ...incorrectAnswers];
+
+            // Shuffle answers
+            answers.sort(() => Math.random() - 0.5);
+
+            const questionDiv = document.createElement('div');
+            questionDiv.classList.add('question');
+            questionDiv.innerHTML = `<div class="question-text">What does "${wordData.word}" mean?</div>`;
+
+            answers.forEach(answer => {
+                const button = document.createElement('button');
+                button.classList.add('answer-button');
+                button.innerText = answer;
+                button.onclick = () => checkAnswer(answer, correctAnswer, level, button,wordData.word);
+                questionDiv.appendChild(button);
+            });
+
+            // Store the current question data
+            currentQuestion = {
+                correctAnswer: correctAnswer,
+                level: level
+            };
+
+            const questionContainer = document.getElementById(`question-container-${level}`);
+            questionContainer.innerHTML = ''; // Clear previous question
+            questionContainer.appendChild(questionDiv);
+
+            // Enable the "Restart" button after the question is loaded
+            document.getElementById("restart-button").disabled = false;
+            questionAnswered = false;
+        }
+        // Function to check the answer
+       function checkAnswer(selectedAnswer, correctAnswer, level, button, word) {
+            const isCorrect = selectedAnswer === correctAnswer;
+            const restartButton = document.getElementById("restart-button");
+
+            // Disable all answer buttons immediately
+            const buttons = document.querySelectorAll(`#question-container-${level} .answer-button`);
+            buttons.forEach(btn => btn.disabled = true);
+
+            if (isCorrect) {
+                score += 10;
+                button.style.backgroundColor = "green";
+                  askedQuestions.push(word);  // Track the word as asked
+            } else {
+                lives--;
+                score -= 5;
+                button.style.backgroundColor = "red";
+
+                // Find the correct answer and make its background green
+                buttons.forEach(btn => {
+                    if (btn.innerText === correctAnswer) {
+                        btn.style.backgroundColor = "green";
+                    }
+                });
+
+                 if (score <= 0) {
+                    score = 0;
+                    if (lives > 0) {
+                        lives--; // Reduce lives to 1 if score goes to zero
+                    }
+                    updateDashboard();
+                     if (lives <= 0) {
+                         //Show Game Over if the lives are zero.
+                             gameOver();
+                        }
+                }
+            }
+
+            updateDashboard();
+
+            // Automatically enable the Restart button after answering
+            restartButton.disabled = false;
+            questionAnswered = true;
+
+             // Clear any existing timer before setting a new one
+            clearTimeout(timer);
+
+            // Setting Timer if the answer is correct or wrong for an automatic transition to the next slide.
+            timer = setTimeout(() => {
+                nextSlide();
+            }, 2000); // 2-second pause
+        }
+    // Function to start the game and go to Level 1
+        function startGame() {
+            // Hide character selection
+            document.getElementById("character-selection").style.display = 'none';
+            // Show Level 1
+            document.getElementById("level1").style.display = 'block';
+            // Generate the first question for Level 1
+            generateQuestion(1);
+        }
+
+         // Function to move to the next slide
+        function nextSlide() {
+                // Reset answer button styling
+                resetAnswerButtonStyles(currentLevel);
+
+            const level = currentLevel;
+
+            // Check if the game is finished
+            if (currentLevel <= 6) {
+                // Move to the next level
+                document.getElementById(`level${level}`).style.display = 'none';
+                currentLevel++;
+
+               //Show Game Over if the current level is above 6.
+                if(currentLevel <=6){
+                     document.getElementById(`level${currentLevel}`).style.display = 'block';
+                      generateQuestion(currentLevel);
+                }
+                else{
+                  endGame();
+               }
+         }
+     }
+        //Function to reset answer button styles
+        function resetAnswerButtonStyles(level) {
+            const buttons = document.querySelectorAll(`#question-container-${level} .answer-button`);
+            buttons.forEach(button => {
+                button.style.backgroundColor = ""; // Remove background color
+                button.disabled = false; // Enable the button
+            });
+        }
+         // Function to end the game
+        function endGame() {
+            document.getElementById(`level${currentLevel-1}`).style.display = 'none';
+            document.getElementById("game-over").style.display = 'block';
+            document.getElementById("final-score").innerText = score;
+            console.log(`Game Over. Final Score: ${score}`);
+        }
+        // Function to handle game over
+        function gameOver() {
+              // Hide all levels
+         /*   for (let i = 1; i <= 6; i++) {
+                document.getElementById(`level${i}`).style.display = 'none';
+            }
+            // Show Game Over
+            document.getElementById(`level${currentLevel-1}`).style.display = 'none';
+            document.getElementById("game-over").style.display = 'block';
+             document.getElementById("final-score").innerText = score; */
+             endGame();
+        }
+        // Function to restart the game
+        function restartGame() {
+            score = 0;
+            lives = 5;
+            currentLevel = 1;
+            updateDashboard();
+            clearTimeout(timer);  // Clear timeout before restarting
+           askedQuestions = [];  // Clear asked questions array
+            // Hide all levels
+             for (let i = 1; i <= 6; i++) {
+                document.getElementById(`level${i}`).style.display = 'none';
+            }
+
+            document.getElementById("game-over").style.display = 'none';
+            document.getElementById("restart").style.display = 'none';
+            document.getElementById("character-selection").style.display = 'block';
+
+             // Remove 'selected' class from all character buttons
+            const buttons = document.querySelectorAll('.character-button');
+            buttons.forEach(button => button.classList.remove('selected'));
+        }
+
+        // Initial game setup
+        updateDashboard();
+        // Initially show the character selection screen
+        document.getElementById("character-selection").style.display = 'block';
+        // Hide other levels
+         for (let i = 1; i <= 6; i++) {
+                document.getElementById(`level${i}`).style.display = 'none';
+            }
+        document.getElementById("game-over").style.display = 'none';
+        document.getElementById("restart").style.display = 'none';
+    </script>
+</body>
+</html>
